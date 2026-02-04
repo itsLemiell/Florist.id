@@ -1,765 +1,1206 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FloristPapan.id - Pesan Bunga Online</title>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>GibranFlorist - Pesan Bunga Online</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png" />
+
     <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    
+    <script
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+
     <!-- Babel untuk JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    screens: {
-                        'xs': '375px', // Breakpoint tambahan untuk HP kecil
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            screens: {
+              xs: "375px", // Breakpoint tambahan untuk HP kecil
+            },
+          },
+        },
+      };
     </script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        /* Smooth scrolling untuk seluruh halaman */
-        html { scroll-behavior: smooth; }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Smooth scrolling untuk seluruh halaman */
+      html {
+        scroll-behavior: smooth;
+      }
 
-        @keyframes zoom-in {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-        .animate-zoom-in { animation: zoom-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes heart-pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        .animate-heart-pop { animation: heart-pop 0.3s ease-in-out; }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes zoom-in {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-zoom-in {
+        animation: zoom-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes heart-pop {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.3);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .animate-heart-pop {
+        animation: heart-pop 0.3s ease-in-out;
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800 antialiased selection:bg-emerald-100 selection:text-emerald-800">
-
+  </head>
+  <body
+    class="bg-gray-50 text-gray-800 antialiased selection:bg-emerald-100 selection:text-emerald-800"
+  >
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+      const { useState, useEffect } = React;
 
-        // --- 0. ICON COMPONENTS ---
-        const IconBase = ({ children, size = 24, className = "", fill = "none", ...props }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
-        );
+      // --- 0. ICON COMPONENTS ---
+      const IconBase = ({
+        children,
+        size = 24,
+        className = "",
+        fill = "none",
+        ...props
+      }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill={fill}
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+          {...props}
+        >
+          {children}
+        </svg>
+      );
 
-        const Menu = (props) => <IconBase {...props}><line x1="4" y1="12" x2="20" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></IconBase>;
-        const X = (props) => <IconBase {...props}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></IconBase>;
-        const ShoppingBag = (props) => <IconBase {...props}><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></IconBase>;
-        const Heart = (props) => <IconBase {...props}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></IconBase>;
-        const Phone = (props) => <IconBase {...props}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.12 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></IconBase>;
-        const Info = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></IconBase>;
-        const Tag = (props) => <IconBase {...props}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></IconBase>;
-        const MessageCircle = (props) => <IconBase {...props}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></IconBase>;
-        const Star = (props) => <IconBase {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></IconBase>;
-        const Search = (props) => <IconBase {...props}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></IconBase>;
-        const MapPin = (props) => <IconBase {...props}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></IconBase>;
-        const Mail = (props) => <IconBase {...props}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></IconBase>;
-        const ArrowLeft = (props) => <IconBase {...props}><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></IconBase>;
-        const Clock = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></IconBase>;
+      const Menu = (props) => (
+        <IconBase {...props}>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </IconBase>
+      );
+      const X = (props) => (
+        <IconBase {...props}>
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </IconBase>
+      );
+      const ShoppingBag = (props) => (
+        <IconBase {...props}>
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </IconBase>
+      );
+      const Heart = (props) => (
+        <IconBase {...props}>
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </IconBase>
+      );
+      const Phone = (props) => (
+        <IconBase {...props}>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.12 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </IconBase>
+      );
+      const Info = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </IconBase>
+      );
+      const Tag = (props) => (
+        <IconBase {...props}>
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+        </IconBase>
+      );
+      const MessageCircle = (props) => (
+        <IconBase {...props}>
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </IconBase>
+      );
+      const Star = (props) => (
+        <IconBase {...props}>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </IconBase>
+      );
+      const Search = (props) => (
+        <IconBase {...props}>
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </IconBase>
+      );
+      const MapPin = (props) => (
+        <IconBase {...props}>
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </IconBase>
+      );
+      const Mail = (props) => (
+        <IconBase {...props}>
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </IconBase>
+      );
+      const ArrowLeft = (props) => (
+        <IconBase {...props}>
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </IconBase>
+      );
+      const Clock = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </IconBase>
+      );
 
-        // Icon Baru: Buket Bunga (Simple Shape)
-        const FlowerBouquet = (props) => (
-          <IconBase {...props}>
-             <path d="M12 22l-5-9h10l-5 9z" />
-             <circle cx="12" cy="8" r="3.5" />
-             <circle cx="7.5" cy="8.5" r="3" />
-             <circle cx="16.5" cy="8.5" r="3" />
-             <circle cx="10" cy="4.5" r="2.5" />
-             <circle cx="14" cy="4.5" r="2.5" />
-          </IconBase>
-        );
+      // Icon Baru: Buket Bunga (Simple Shape)
+      const FlowerBouquet = (props) => (
+        <IconBase {...props}>
+          <path d="M12 22l-5-9h10l-5 9z" />
+          <circle cx="12" cy="8" r="3.5" />
+          <circle cx="7.5" cy="8.5" r="3" />
+          <circle cx="16.5" cy="8.5" r="3" />
+          <circle cx="10" cy="4.5" r="2.5" />
+          <circle cx="14" cy="4.5" r="2.5" />
+        </IconBase>
+      );
 
-        // --- IMAGE PLACEHOLDERS (Data URIs for Reliability) ---
-        const svgWedding = `
-            <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
-              <rect width="100%" height="100%" fill="#ffe4e6"/>
-              <rect x="20" y="20" width="360" height="360" fill="#be123c" rx="20"/>
-              <rect x="40" y="40" width="320" height="320" fill="#fff1f2" rx="10"/>
-              <text x="200" y="160" font-family="sans-serif" font-size="28" font-weight="bold" fill="#be123c" text-anchor="middle">HAPPY</text>
-              <text x="200" y="200" font-family="sans-serif" font-size="28" font-weight="bold" fill="#be123c" text-anchor="middle">WEDDING</text>
-              <text x="200" y="240" font-family="sans-serif" font-size="18" fill="#881337" text-anchor="middle" font-style="italic">Selamat &amp; Sukses</text>
-              <circle cx="50" cy="50" r="30" fill="#fb7185"/><circle cx="50" cy="50" r="15" fill="#fecdd3"/>
-              <circle cx="350" cy="50" r="30" fill="#fb7185"/><circle cx="350" cy="50" r="15" fill="#fecdd3"/>
-              <circle cx="50" cy="350" r="30" fill="#fb7185"/><circle cx="50" cy="350" r="15" fill="#fecdd3"/>
-              <circle cx="350" cy="350" r="30" fill="#fb7185"/><circle cx="350" cy="350" r="15" fill="#fecdd3"/>
-            </svg>
-        `.trim();
-        const imgWedding = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgWedding)}`;
+      // --- 1. DATA & HELPER FUNCTIONS ---
 
-        // --- 1. DATA & HELPER FUNCTIONS ---
+      const CATEGORIES = [
+        "Semua",
+        "Pernikahan",
+        "Duka Cita",
+        "Grand Opening",
+        "Ulang Tahun",
+        "Buket Bunga",
+        "Selamat & Sukses",
+      ];
 
-        const CATEGORIES = [
-          "Semua", "Pernikahan", "Duka Cita", "Grand Opening", "Ulang Tahun", "Buket Bunga",
-        ];
+      // DATA PRODUK DENGAN PATH ASSETS ANDA
+      const PRODUCTS_DATA = [
+        {
+          id: 1,
+          name: "Buket Bunga - Romantic Roses - 001",
+          rating: 4.8,
+          sold: 120,
+          category: "Buket Bunga",
+          image: "assets/buket6.jpeg",
+          badge: "Terlaris",
+        },
+        {
+          id: 2,
+          name: "Buket Bunga - White Lily Grace - 002",
+          price: 120000,
+          rating: 4.9,
+          sold: 85,
+          category: "Buket Bunga",
+          image: "assets/buket7.jpeg",
+          badge: null,
+        },
+        {
+          id: 3,
+          name: "Standing flower - Selamat ulang tahun - 001",
+          price: 300000,
+          rating: 5.0,
+          sold: 40,
+          category: "Buket Bunga",
+          image: "assets/Standingflower.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 4,
+          name: "Papan Bunga - turut berduka cita - 001",
+          price: 650000,
+          rating: 4.7,
+          sold: 200,
+          category: "Duka Cita",
+          image: "assets/papanbunga1.jpeg",
+          badge: "Hemat",
+        },
+        {
+          id: 5,
+          name: "Papan Bunga - Happy Wedding - 001",
+          price: 750000,
+          rating: 4.6,
+          sold: 55,
+          category: "Pernikahan",
+          image: "assets/papanbunga2.jpeg",
+          badge: null,
+        },
+        {
+          id: 6,
+          name: "Papan Bunga - Selamat & Sukses - 001",
+          price: 700000,
+          rating: 4.5,
+          sold: 300,
+          category: "Selamat & Sukses",
+          image: "assets/papanbunga3.jpeg",
+          badge: "Termurah",
+        },
+        {
+          id: 7,
+          name: "Papan Bunga - Selamat & Sukses - 002",
+          price: 700000,
+          rating: 4.5,
+          sold: 300,
+          category: "Selamat & Sukses",
+          image: "assets/papanbunga4.jpeg",
+          badge: "Termurah",
+        },
+        {
+          id: 8,
+          name: "Papan Bunga - Happy Wedding - 002",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Pernikahan",
+          image: "assets/papanbunga5.jpeg",
+          badge: "Terlaris",
+        },
+        {
+          id: 9,
+          name: "papan Bunga - Turut Berduka Cita - 002",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Duka Cita",
+          image: "assets/papanbunga6.jpeg",
+          badge: "Terlaris",
+        },
+        {
+          id: 10,
+          name: "papan Bunga - Turut Berduka Cita - 003",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Duka Cita",
+          image: "assets/papanbunga7.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 11,
+          name: "papan Bunga - Turut Berduka Cita - 004",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Duka Cita",
+          image: "assets/papanbunga8.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 12,
+          name: "papan Bunga - Turut Berduka Cita - 005",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Duka Cita",
+          image: "assets/papanbunga9.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 13,
+          name: "papan Bunga - Happy Wedding - 003",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Pernikahan",
+          image: "assets/papanbunga10.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 14,
+          name: "papan Bunga - Selamat & Sukses - 003",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Selamat & Sukses",
+          image: "assets/papanbunga11.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 15,
+          name: "papan Bunga - Happy Wedding - 004",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Pernikahan",
+          image: "assets/papanbunga12.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 16,
+          name: "papan Bunga - Happy Wedding - 005",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Pernikahan",
+          image: "assets/papanbunga13.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 17,
+          name: "papan Bunga - Happy Wedding - 006",
+          price: 750000,
+          rating: 4.8,
+          sold: 120,
+          category: "Pernikahan",
+          image: "assets/papanbunga14.jpeg",
+          badge: "Promo",
+        },
+        {
+          id: 18,
+          name: "papan Bunga - Selamat Ulang Tahun - 001",
+          price: 650000,
+          rating: 4.8,
+          sold: 120,
+          category: "Ulang Tahun",
+          image: "assets/papanbunga15.jpeg",
+          badge: "Promo",
+        },
+      ];
 
-        const PRODUCTS_DATA = [
-          {
-            id: 1,
-            name: "Happy Wedding - Pastel Elegant Series",
-            price: 650000,
-            rating: 4.8,
-            sold: 120,
-            category: "Grand Opening",
-            image: "assets/Selamat-Sukses.jpg",
-            badge: "Terlaris",
-          },
-          {
-            id: 2,
-            name: "Deep Condolences - Premium Black & Gold",
-            price: 850000,
-            rating: 4.9,
-            sold: 85,
-            category: "Duka Cita",
-            image: "assets/bungapapan.png ",
-            badge: null,
-          },
-          {
-            id: 3,
-            name: "Papan Bunga - Selamat ulang tahun",
-            price: 1200000,
-            rating: 5.0,
-            sold: 40,
-            category: "Grand Opening",
-            image: "",
-            badge: "Promo",
-          },
-          {
-            id: 4,
-            name: "Papan Bunga - Happy Wedding",
-            price: 550000,
-            rating: 4.7,
-            sold: 200,
-            category: "Pernikahan",
-            image: "assets/bungapapan2.jpeg",
-            badge: "Hemat",
-          },
-          {
-            id: 5,
-            name: "Papan Bunga - Selamat & Sukses",
-            price: 750000,
-            rating: 4.6,
-            sold: 55,
-            category: "Grand Opening",
-            image: "assets/bungapapan3.jpeg",
-            badge: null,
-          },
-          {
-            id: 6,
-            name: "Turut Berduka Cita - Simple White",
-            price: 450000,
-            rating: 4.5,
-            sold: 300,
-            category: "Duka Cita",
-            image: "https://placehold.co/400x400/fafafa/525252?text=Duka+Cita+Simple",
-            badge: "Termurah",
-          },
-          {
-            id: 7,
-            name: "Papan Bunga - Happy Birthday",
-            price: 450000,
-            rating: 4.5,
-            sold: 300,
-            category: "Ulang Tahun",
-            image: "assets/papanbungahbd.jpeg",
-            badge: "Termurah",
-          },
-          {
-            id: 8,
-            name: "Buket Bunga - Romantic Roses",
-            price: 120000,
-            rating: 4.8,
-            sold: 120,
-            category: "Buket Bunga",
-            image: "assets/buket1.jpeg",
-            badge: "Terlaris",
-          },
-          {
-            id: 9,
-            name: "Buket Bunga - Romantic pink",
-            price: 120000,
-            rating: 4.8,
-            sold: 120,
-            category: "Buket Bunga",
-            image: "assets/buket2.jpeg",
-            badge: "Terlaris",
-          },
-          {
-            id: 10,
-            name: "Buket Bunga - Romance tulip",
-            price: 120000,
-            rating: 4.8,
-            sold: 120,
-            category: "Buket Bunga",
-            image: "assets/buket3.jpeg",
-            badge: "Promo",
-          },
-          {
-            id: 11,
-            name: "Buket Bunga - Romantic",
-            price: 120000,
-            rating: 4.8,
-            sold: 120,
-            category: "Buket Bunga",
-            image: "assets/buket4.jpeg",
-            badge: "Promo",
-          },
-          {
-            id: 12,
-            name: "Buket Bunga - Romantic",
-            price: 120000,
-            rating: 4.8,
-            sold: 120,
-            category: "Buket Bunga",
-            image: "assets/buket5.jpeg",
-            badge: "Promo",
-          },
-        ];
+      const formatRupiah = (price) =>
+        new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }).format(price);
 
-        const formatRupiah = (price) =>
-          new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-          }).format(price);
+      const generateWALink = (productName = "") => {
+        const phone = "6283170911994"; // Nomor WhatsApp admin
+        let message = "Halo, saya ingin memesan bunga papan ini.";
+        if (productName)
+          message = `Halo, saya tertarik dengan produk *${productName}*. Apakah masih tersedia?`;
+        return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      };
 
-        const generateWALink = (productName = "") => {
-          const phone = "6281286102477";
-          let message = "Halo, saya ingin memesan bunga papan ini.";
-          if (productName)
-            message = `Halo, saya tertarik dengan produk *${productName}*. Apakah masih tersedia?`;
-          return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-        };
+      // --- FUNGSI BARU UNTUK CEK ONGKIR ---
+      const generateCheckOngkirLink = () => {
+        const phone = "6281286102477"; // Menggunakan nomor admin 2
+        const message =
+          "Halo GibranFlorist, saya mau cek apakah lokasi pengiriman saya masuk area Promo Gratis Ongkir?";
+        return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      };
 
-        // --- 2. SUB-COMPONENTS ---
+      // --- 2. SUB-COMPONENTS ---
 
-        const MenuItem = ({ icon, label, active = false, badge, onClick }) => (
-          <button
-            onClick={onClick}
-            className={`w-full flex items-center justify-between p-3.5 rounded-lg transition-all duration-200 active:bg-gray-100 ${
-              active
-                ? "bg-emerald-50 text-emerald-700 font-medium translate-x-2 shadow-sm border border-emerald-100"
-                : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"
-            }`}
+      const MenuItem = ({ icon, label, active = false, badge, onClick }) => (
+        <button
+          onClick={onClick}
+          className={`w-full flex items-center justify-between p-3.5 rounded-lg transition-all duration-200 active:bg-gray-100 ${
+            active
+              ? "bg-emerald-50 text-emerald-700 font-medium translate-x-2 shadow-sm border border-emerald-100"
+              : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            {icon}
+            <span className="text-sm font-medium">{label}</span>
+          </div>
+          {badge && (
+            <span className="bg-rose-100 text-rose-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
+              {badge}
+            </span>
+          )}
+        </button>
+      );
+
+      // Komponen Modal untuk Preview Gambar
+      const ImageModal = ({ src, onClose }) => {
+        if (!src) return null;
+        return (
+          <div
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in cursor-zoom-out"
+            onClick={onClose}
           >
-            <div className="flex items-center gap-3">
-              {icon}
-              <span className="text-sm font-medium">{label}</span>
-            </div>
-            {badge && (
-              <span className="bg-rose-100 text-rose-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                {badge}
-              </span>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-white/80 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors z-[101]"
+            >
+              <X size={32} />
+            </button>
+            <img
+              src={src}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-zoom-in cursor-default"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      };
+
+      const ProductGrid = ({
+        items,
+        title,
+        onImageClick,
+        favorites = [],
+        onToggleFavorite,
+      }) => (
+        <div className="animate-fade-in">
+          <div className="flex justify-between items-end mb-4 px-1">
+            {title && (
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 tracking-tight">
+                {title}
+              </h2>
             )}
-          </button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
+            {items.map((product) => {
+              const isFavorite = favorites.includes(product.id);
+              return (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full group"
+                >
+                  <div
+                    className="relative aspect-square bg-gray-100 overflow-hidden cursor-zoom-in"
+                    onClick={() => onImageClick && onImageClick(product.image)}
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                    />
+                    {product.badge && (
+                      <div className="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm z-10 pointer-events-none">
+                        {product.badge}
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                  </div>
+                  <div className="p-3 md:p-4 flex flex-col flex-grow">
+                    <h3
+                      className="text-xs md:text-sm font-medium text-gray-800 line-clamp-2 mb-1.5 leading-snug h-8 md:h-10 group-hover:text-emerald-700 transition-colors cursor-pointer"
+                      onClick={() =>
+                        onImageClick && onImageClick(product.image)
+                      }
+                    >
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center gap-1 mb-2.5">
+                      <Star
+                        size={11}
+                        className="text-yellow-400 fill-yellow-400"
+                      />
+                      <span className="text-[10px] md:text-xs text-gray-500">
+                        {product.rating} <span className="mx-0.5">•</span>{" "}
+                        Terjual {product.sold}+
+                      </span>
+                    </div>
+                    <div className="mt-auto">
+                      {/* FITUR FAVORIT DI SEBELAH HARGA */}
+                      <div className="flex justify-end items-center mb-3">
+                        <button
+                          onClick={(e) =>
+                            onToggleFavorite && onToggleFavorite(product.id, e)
+                          }
+                          className="p-2 -mr-2 rounded-full hover:bg-gray-50 transition-colors group/heart"
+                          aria-label={
+                            isFavorite
+                              ? "Hapus dari favorit"
+                              : "Tambah ke favorit"
+                          }
+                        >
+                          <Heart
+                            size={20}
+                            className={`transition-all duration-300 ${
+                              isFavorite
+                                ? "text-rose-500 fill-rose-500 animate-heart-pop"
+                                : "text-gray-400 group-hover/heart:text-rose-400"
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      <a
+                        href={generateWALink(product.name)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 text-xs md:text-sm font-bold py-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all duration-300 border border-emerald-100 hover:border-emerald-600 active:scale-95"
+                      >
+                        Pesan
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {items.length === 0 && (
+            <div className="text-center py-20 animate-fade-in">
+              <div className="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <Search size={36} className="text-gray-400" />
+              </div>
+              <p className="text-gray-500 font-medium text-lg">
+                Produk tidak ditemukan.
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                Coba kata kunci lain seperti "Wedding" atau "Duka Cita"
+              </p>
+            </div>
+          )}
+        </div>
+      );
+
+      // --- 3. PAGE VIEWS ---
+
+      const PencarianView = ({
+        searchQuery,
+        products,
+        onImageClick,
+        favorites,
+        onToggleFavorite,
+      }) => {
+        const results = products.filter((p) =>
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()),
         );
 
-        // Komponen Modal untuk Preview Gambar
-        const ImageModal = ({ src, onClose }) => {
-            if (!src) return null;
-            return (
-                <div 
-                    className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in cursor-zoom-out"
-                    onClick={onClose}
-                >
-                    <button 
-                        onClick={onClose} 
-                        className="absolute top-4 right-4 text-white/80 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors z-[101]"
-                    >
-                        <X size={32} />
-                    </button>
-                    <img 
-                        src={src} 
-                        alt="Preview" 
-                        className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-zoom-in cursor-default" 
-                        onClick={(e) => e.stopPropagation()} 
-                    />
-                </div>
-            );
-        };
-
-        const ProductGrid = ({ items, title, onImageClick, favorites = [], onToggleFavorite }) => (
+        return (
           <div className="animate-fade-in">
-            <div className="flex justify-between items-end mb-4 px-1">
-              {title && <h2 className="text-lg md:text-xl font-bold text-gray-800 tracking-tight">{title}</h2>}
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
-              {items.map((product) => {
-                const isFavorite = favorites.includes(product.id);
-                return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full group"
-                    >
-                      <div 
-                        className="relative aspect-square bg-gray-100 overflow-hidden cursor-zoom-in"
-                        onClick={() => onImageClick && onImageClick(product.image)}
-                      >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                        />
-                        {product.badge && (
-                          <div className="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm z-10 pointer-events-none">
-                            {product.badge}
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
-                      </div>
-                      <div className="p-3 md:p-4 flex flex-col flex-grow">
-                        <h3 
-                            className="text-xs md:text-sm font-medium text-gray-800 line-clamp-2 mb-1.5 leading-snug h-8 md:h-10 group-hover:text-emerald-700 transition-colors cursor-pointer"
-                            onClick={() => onImageClick && onImageClick(product.image)}
-                        >
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center gap-1 mb-2.5">
-                          <Star size={11} className="text-yellow-400 fill-yellow-400" />
-                          <span className="text-[10px] md:text-xs text-gray-500">
-                            {product.rating} <span className="mx-0.5">•</span> Terjual {product.sold}+
-                          </span>
-                        </div>
-                        <div className="mt-auto">
-                          {/* FITUR FAVORIT DI SEBELAH HARGA */}
-                          <div className="flex justify-between items-center mb-3">
-                            <p className="text-sm md:text-base lg:text-lg font-bold text-emerald-700">
-                                {formatRupiah(product.price)}
-                            </p>
-                            <button
-                                onClick={(e) => onToggleFavorite && onToggleFavorite(product.id, e)}
-                                className="p-2 -mr-2 rounded-full hover:bg-gray-50 transition-colors group/heart"
-                                aria-label={isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}
-                            >
-                                <Heart
-                                    size={20}
-                                    className={`transition-all duration-300 ${
-                                        isFavorite 
-                                            ? "text-rose-500 fill-rose-500 animate-heart-pop" 
-                                            : "text-gray-400 group-hover/heart:text-rose-400"
-                                    }`}
-                                />
-                            </button>
-                          </div>
-
-                          <a
-                            href={generateWALink(product.name)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="w-full flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 text-xs md:text-sm font-bold py-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all duration-300 border border-emerald-100 hover:border-emerald-600 active:scale-95"
-                          >
-                            Pesan
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                );
-              })}
-            </div>
-            {items.length === 0 && (
-              <div className="text-center py-20 animate-fade-in">
-                <div className="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                  <Search size={36} className="text-gray-400" />
-                </div>
-                <p className="text-gray-500 font-medium text-lg">Produk tidak ditemukan.</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Coba kata kunci lain seperti "Wedding" atau "Duka Cita"
+            <div className="mb-6 bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm">
+              <p className="text-sm md:text-base text-gray-500">
+                {searchQuery ? (
+                  <>
+                    Hasil pencarian untuk "
+                    <span className="font-bold text-gray-800">
+                      {searchQuery}
+                    </span>
+                    "
+                  </>
+                ) : (
+                  "Silakan ketik nama produk yang ingin dicari..."
+                )}
+              </p>
+              {searchQuery && (
+                <p className="text-xs md:text-sm text-emerald-600 mt-1 font-medium">
+                  Ditemukan {results.length} produk
                 </p>
+              )}
+            </div>
+            <ProductGrid
+              items={results}
+              title=""
+              onImageClick={onImageClick}
+              favorites={favorites}
+              onToggleFavorite={onToggleFavorite}
+            />
+          </div>
+        );
+      };
+
+      const KatalogView = ({
+        activeCategory,
+        setActiveCategory,
+        products,
+        categories,
+        onImageClick,
+        favorites,
+        onToggleFavorite,
+      }) => {
+        const filteredProducts =
+          activeCategory === "Semua"
+            ? products
+            : products.filter((p) => p.category === activeCategory);
+
+        return (
+          <div className="animate-fade-in">
+            <div className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl p-5 md:p-8 mb-8 text-white shadow-lg flex items-center justify-between overflow-hidden relative transition-transform hover:scale-[1.01] duration-500">
+              <div className="relative z-10 max-w-[70%]">
+                <h2 className="text-xl md:text-3xl font-bold mb-2">
+                  Gratis Ongkir!
+                </h2>
+                <p className="text-xs md:text-base text-emerald-100 mb-4 leading-relaxed">
+                  Khusus pengiriman dalam kota untuk pemesanan hari ini.
+                </p>
+                {/* BUTTON: Link ke WA untuk Cek Ongkir */}
+                <a
+                  href={generateCheckOngkirLink()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block bg-white text-emerald-700 text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg shadow-sm hover:bg-emerald-50 active:scale-95 transition-all cursor-pointer no-underline"
+                >
+                  Cek Area Saya
+                </a>
+              </div>
+              {/* Responsive Icon: Scale down on mobile, normal on desktop */}
+              <div className="absolute -right-4 -bottom-6 md:right-0 md:bottom-0 opacity-20 transform scale-75 md:scale-100 origin-bottom-right">
+                <FlowerBouquet size={140} fill="currentColor" />
+              </div>
+            </div>
+
+            <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 mb-4 no-scrollbar scroll-smooth">
+              {categories.map((cat, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`whitespace-nowrap px-4 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 border flex-shrink-0 ${
+                    activeCategory === cat
+                      ? "bg-emerald-600 text-white border-emerald-600 shadow-md scale-105"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:text-emerald-600"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <ProductGrid
+              key={activeCategory}
+              items={filteredProducts}
+              title="Rekomendasi Pilihan"
+              onImageClick={onImageClick}
+              favorites={favorites}
+              onToggleFavorite={onToggleFavorite}
+            />
+          </div>
+        );
+      };
+
+      const FavoritView = ({
+        products,
+        onImageClick,
+        favorites,
+        onToggleFavorite,
+      }) => {
+        // Filter produk berdasarkan daftar favorit
+        const favoriteProducts = products.filter((p) =>
+          favorites.includes(p.id),
+        );
+
+        return (
+          <div className="animate-fade-in">
+            <div className="bg-rose-50 border border-rose-100 p-4 md:p-6 rounded-xl mb-6 flex items-center gap-4">
+              <div className="p-3 bg-white rounded-full shadow-sm">
+                <Heart
+                  className="text-rose-500"
+                  fill="currentColor"
+                  size={24}
+                />
+              </div>
+              <div>
+                <h2 className="font-bold text-rose-700 text-lg">
+                  Produk Favorit
+                </h2>
+                <p className="text-sm text-rose-600">
+                  {favorites.length > 0
+                    ? `${favorites.length} produk tersimpan.`
+                    : "Belum ada produk favorit."}
+                </p>
+              </div>
+            </div>
+
+            {favorites.length > 0 ? (
+              <ProductGrid
+                items={favoriteProducts}
+                title="Disimpan"
+                onImageClick={onImageClick}
+                favorites={favorites}
+                onToggleFavorite={onToggleFavorite}
+              />
+            ) : (
+              <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-200">
+                <Heart className="mx-auto text-gray-300 mb-3" size={48} />
+                <p className="text-gray-500">
+                  Anda belum menyukai produk apapun.
+                </p>
+                <button
+                  onClick={() => window.location.reload()} // Simple way to go back or implement a navigation handler
+                  className="mt-4 text-emerald-600 font-bold hover:underline"
+                >
+                  Lihat Katalog
+                </button>
               </div>
             )}
           </div>
         );
+      };
 
-        // --- 3. PAGE VIEWS ---
-
-        const PencarianView = ({ searchQuery, products, onImageClick, favorites, onToggleFavorite }) => {
-          const results = products.filter((p) =>
-            p.name.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-
-          return (
-            <div className="animate-fade-in">
-              <div className="mb-6 bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm">
-                <p className="text-sm md:text-base text-gray-500">
-                  {searchQuery ? (
-                    <>
-                      Hasil pencarian untuk "<span className="font-bold text-gray-800">{searchQuery}</span>"
-                    </>
-                  ) : (
-                    "Silakan ketik nama produk yang ingin dicari..."
-                  )}
+      const PromoView = ({
+        products,
+        onImageClick,
+        favorites,
+        onToggleFavorite,
+      }) => {
+        const promoProducts = products.filter((p) => p.badge);
+        return (
+          <div className="animate-fade-in">
+            <div className="bg-yellow-50 border border-yellow-100 p-4 md:p-6 rounded-xl mb-6 flex items-center gap-4">
+              <div className="p-3 bg-white rounded-full shadow-sm">
+                <Tag
+                  className="text-yellow-600"
+                  fill="currentColor"
+                  size={24}
+                />
+              </div>
+              <div>
+                <h2 className="font-bold text-yellow-800 text-lg">
+                  Promo Spesial
+                </h2>
+                <p className="text-sm text-yellow-700">
+                  Penawaran terbatas untuk momen terbaik.
                 </p>
-                {searchQuery && (
-                  <p className="text-xs md:text-sm text-emerald-600 mt-1 font-medium">
-                    Ditemukan {results.length} produk
-                  </p>
-                )}
               </div>
-              <ProductGrid items={results} title="" onImageClick={onImageClick} favorites={favorites} onToggleFavorite={onToggleFavorite} />
             </div>
-          );
-        };
+            <ProductGrid
+              items={promoProducts}
+              title="Sedang Diskon"
+              onImageClick={onImageClick}
+              favorites={favorites}
+              onToggleFavorite={onToggleFavorite}
+            />
+          </div>
+        );
+      };
 
-        const KatalogView = ({ activeCategory, setActiveCategory, products, categories, onImageClick, favorites, onToggleFavorite }) => {
-          const filteredProducts = activeCategory === "Semua"
-              ? products
-              : products.filter((p) => p.category === activeCategory);
-
-          return (
-            <div className="animate-fade-in">
-              <div className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl p-5 md:p-8 mb-8 text-white shadow-lg flex items-center justify-between overflow-hidden relative transition-transform hover:scale-[1.01] duration-500">
-                <div className="relative z-10 max-w-[70%]">
-                  <h2 className="text-xl md:text-3xl font-bold mb-2">Gratis Ongkir!</h2>
-                  <p className="text-xs md:text-base text-emerald-100 mb-4 leading-relaxed">
-                    Khusus pengiriman dalam kota untuk pemesanan hari ini.
-                  </p>
-                  <button className="bg-white text-emerald-700 text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg shadow-sm hover:bg-emerald-50 active:scale-95 transition-all">
-                    Cek Sekarang
-                  </button>
-                </div>
-                {/* Responsive Icon: Scale down on mobile, normal on desktop */}
-                <div className="absolute -right-4 -bottom-6 md:right-0 md:bottom-0 opacity-20 transform scale-75 md:scale-100 origin-bottom-right">
-                  <FlowerBouquet size={140} fill="currentColor" />
-                </div>
-              </div>
-              
-              <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 mb-4 no-scrollbar scroll-smooth">
-                {categories.map((cat, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`whitespace-nowrap px-4 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 border flex-shrink-0 ${
-                      activeCategory === cat
-                        ? "bg-emerald-600 text-white border-emerald-600 shadow-md scale-105"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:text-emerald-600"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-              
-              <ProductGrid key={activeCategory} items={filteredProducts} title="Rekomendasi Pilihan" onImageClick={onImageClick} favorites={favorites} onToggleFavorite={onToggleFavorite} />
+      const TentangView = () => (
+        <div className="animate-fade-in space-y-6 md:space-y-8">
+          <div className="relative h-48 md:h-64 bg-gray-200 rounded-2xl overflow-hidden group shadow-md">
+            <img
+              src="assets/bunga.jpg"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              alt="Workshop"
+            />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <h2 className="text-2xl md:text-4xl font-bold text-white tracking-wide">
+                Tentang Kami
+              </h2>
             </div>
-          );
-        };
-
-        const FavoritView = ({ products, onImageClick, favorites, onToggleFavorite }) => {
-            // Filter produk berdasarkan daftar favorit
-            const favoriteProducts = products.filter(p => favorites.includes(p.id));
-
-            return (
-              <div className="animate-fade-in">
-                <div className="bg-rose-50 border border-rose-100 p-4 md:p-6 rounded-xl mb-6 flex items-center gap-4">
-                  <div className="p-3 bg-white rounded-full shadow-sm">
-                     <Heart className="text-rose-500" fill="currentColor" size={24} />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-rose-700 text-lg">Produk Favorit</h2>
-                    <p className="text-sm text-rose-600">
-                        {favorites.length > 0 
-                            ? `${favorites.length} produk tersimpan.` 
-                            : "Belum ada produk favorit."}
-                    </p>
-                  </div>
+          </div>
+          <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="font-bold text-xl md:text-2xl mb-4 text-emerald-800">
+              Mengapa Memilih GibranFlorist?
+            </h3>
+            <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+              GibranFlorist telah menjadi kepercayaan ribuan pelanggan untuk
+              menyampaikan pesan kebahagiaan maupun duka cita melalui rangkaian
+              bunga terbaik. Kami mengutamakan ketepatan waktu dan kesegaran
+              bunga.
+            </p>
+            <ul className="space-y-4 md:grid md:grid-cols-3 md:space-y-0 md:gap-6">
+              <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
+                <div className="bg-emerald-100 p-2 rounded-full">
+                  <Clock size={18} className="text-emerald-600" />
                 </div>
-                
-                {favorites.length > 0 ? (
-                    <ProductGrid items={favoriteProducts} title="Disimpan" onImageClick={onImageClick} favorites={favorites} onToggleFavorite={onToggleFavorite} />
-                ) : (
-                    <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-200">
-                        <Heart className="mx-auto text-gray-300 mb-3" size={48} />
-                        <p className="text-gray-500">Anda belum menyukai produk apapun.</p>
-                        <button 
-                            onClick={() => window.location.reload()} // Simple way to go back or implement a navigation handler
-                            className="mt-4 text-emerald-600 font-bold hover:underline"
-                        >
-                            Lihat Katalog
-                        </button>
-                    </div>
-                )}
-              </div>
-            );
-        };
+                <span className="font-medium">Layanan 24 Jam</span>
+              </li>
+              <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
+                <div className="bg-emerald-100 p-2 rounded-full">
+                  <MapPin size={18} className="text-emerald-600" />
+                </div>
+                <span className="font-medium">Gratis Ongkir Kota</span>
+              </li>
+              <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
+                <div className="bg-emerald-100 p-2 rounded-full">
+                  <Star size={18} className="text-emerald-600" />
+                </div>
+                <span className="font-medium">Jaminan Bunga Segar</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      );
 
-        const PromoView = ({ products, onImageClick, favorites, onToggleFavorite }) => {
-          const promoProducts = products.filter((p) => p.badge);
-          return (
-            <div className="animate-fade-in">
-              <div className="bg-yellow-50 border border-yellow-100 p-4 md:p-6 rounded-xl mb-6 flex items-center gap-4">
-                <div className="p-3 bg-white rounded-full shadow-sm">
-                   <Tag className="text-yellow-600" fill="currentColor" size={24} />
+      const KontakView = () => (
+        <div className="animate-fade-in space-y-6">
+          <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-800 border-b pb-4">
+              Hubungi Kami
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                <div className="bg-blue-50 p-3 rounded-xl shrink-0">
+                  <MapPin className="text-blue-600" size={24} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-yellow-800 text-lg">Promo Spesial</h2>
-                  <p className="text-sm text-yellow-700">
-                    Penawaran terbatas untuk momen terbaik.
+                  <h3 className="font-bold text-gray-700 text-lg">
+                    Alamat Workshop
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                    Jl. Assofa I No.13, RT.4/RW.1, Sukabumi Utara, Kec. Kb.
+                    Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta
+                    11540, Indonesia
                   </p>
                 </div>
               </div>
-              <ProductGrid items={promoProducts} title="Sedang Diskon" onImageClick={onImageClick} favorites={favorites} onToggleFavorite={onToggleFavorite} />
+              <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                <div className="bg-green-50 p-3 rounded-xl shrink-0">
+                  <Phone className="text-green-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-700 text-lg">WhatsApp</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    0831-7091-1994 (Admin 1)
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    0812-8610-2477 (Admin 2)
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 md:col-span-2">
+                <div className="bg-orange-50 p-3 rounded-xl shrink-0">
+                  <Mail className="text-orange-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-700 text-lg">Email</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    gibranflorist@gmail.com
+                  </p>
+                </div>
+              </div>
             </div>
-          );
+          </div>
+        </div>
+      );
+
+      // --- 4. MAIN COMPONENT (App) ---
+
+      const App = () => {
+        // --- STATE ---
+        const [isMenuOpen, setIsMenuOpen] = useState(false);
+        const [scrolled, setScrolled] = useState(false);
+        const [activePage, setActivePage] = useState("katalog");
+        const [activeCategory, setActiveCategory] = useState("Semua");
+        const [isSearchOpen, setIsSearchOpen] = useState(false);
+        const [searchQuery, setSearchQuery] = useState("");
+        const [previewImage, setPreviewImage] = useState(null);
+        // State Favorit dengan data awal (contoh ID 1 dan 3)
+        const [favorites, setFavorites] = useState([1, 3]);
+
+        // --- HANDLERS ---
+        const handleNavigate = (page) => {
+          setActivePage(page);
+          setIsMenuOpen(false);
+          setIsSearchOpen(false);
+          window.scrollTo({ top: 0, behavior: "smooth" });
         };
 
-        const TentangView = () => (
-          <div className="animate-fade-in space-y-6 md:space-y-8">
-            <div className="relative h-48 md:h-64 bg-gray-200 rounded-2xl overflow-hidden group shadow-md">
-              <img
-                src="https://placehold.co/800x400/emerald/white?text=Workshop+Kami"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                alt="Workshop"
-              />
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <h2 className="text-2xl md:text-4xl font-bold text-white tracking-wide">Tentang Kami</h2>
-              </div>
-            </div>
-            <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-xl md:text-2xl mb-4 text-emerald-800">Mengapa Memilih FloristPapan?</h3>
-              <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
-                Berdiri sejak 2015, FloristPapan.id telah menjadi kepercayaan ribuan pelanggan untuk menyampaikan pesan kebahagiaan maupun duka cita melalui rangkaian bunga terbaik. Kami mengutamakan ketepatan waktu dan kesegaran bunga.
-              </p>
-              <ul className="space-y-4 md:grid md:grid-cols-3 md:space-y-0 md:gap-6">
-                <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
-                  <div className="bg-emerald-100 p-2 rounded-full"><Clock size={18} className="text-emerald-600" /></div>
-                  <span className="font-medium">Layanan 24 Jam</span>
-                </li>
-                <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
-                  <div className="bg-emerald-100 p-2 rounded-full"><MapPin size={18} className="text-emerald-600" /></div>
-                  <span className="font-medium">Gratis Ongkir Kota</span>
-                </li>
-                <li className="flex md:flex-col items-center md:items-start gap-3 text-sm md:text-base text-gray-700 bg-gray-50 md:bg-transparent p-3 md:p-0 rounded-lg">
-                  <div className="bg-emerald-100 p-2 rounded-full"><Star size={18} className="text-emerald-600" /></div>
-                  <span className="font-medium">Jaminan Bunga Segar</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        );
+        const openSearch = () => {
+          setIsSearchOpen(true);
+          setActivePage("pencarian");
+        };
 
-        const KontakView = () => (
-          <div className="animate-fade-in space-y-6">
-            <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-800 border-b pb-4">Hubungi Kami</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                  <div className="bg-blue-50 p-3 rounded-xl shrink-0"><MapPin className="text-blue-600" size={24} /></div>
-                  <div>
-                    <h3 className="font-bold text-gray-700 text-lg">Alamat Workshop</h3>
-                    <p className="text-sm text-gray-500 mt-1 leading-relaxed">Jl. Assofa I No.13, RT.4/RW.1, Sukabumi Utara, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11540, Indonesia</p>
+        const closeSearch = () => {
+          setIsSearchOpen(false);
+          setSearchQuery("");
+          setActivePage("katalog");
+        };
+
+        const openPreview = (imgSrc) => {
+          setPreviewImage(imgSrc);
+        };
+
+        const closePreview = () => {
+          setPreviewImage(null);
+        };
+
+        // Handler untuk toggle favorite
+        const toggleFavorite = (id, e) => {
+          if (e) e.stopPropagation(); // Mencegah klik tembus ke preview gambar
+          setFavorites((prev) => {
+            if (prev.includes(id)) {
+              return prev.filter((favId) => favId !== id); // Hapus
+            } else {
+              return [...prev, id]; // Tambah
+            }
+          });
+        };
+
+        useEffect(() => {
+          const handleScroll = () => setScrolled(window.scrollY > 20);
+          window.addEventListener("scroll", handleScroll);
+          return () => window.removeEventListener("scroll", handleScroll);
+        }, []);
+
+        // --- RENDER ---
+        return (
+          <div className="min-h-screen bg-gray-50 font-sans text-gray-800 pb-safe">
+            {/* HEADER */}
+            <header
+              className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? "bg-white shadow-md py-2" : "bg-white/95 backdrop-blur-md py-3 shadow-sm"}`}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {isSearchOpen ? (
+                  <div className="flex items-center h-full gap-3 animate-fade-in">
+                    <div className="relative flex-1">
+                      <Search
+                        size={18}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Cari..."
+                        className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 border-none transition-all"
+                        autoFocus
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <button
+                      onClick={closeSearch}
+                      className="p-2 text-gray-500 hover:text-rose-500 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <span className="text-xs font-bold whitespace-nowrap">
+                        Batal
+                      </span>
+                    </button>
                   </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                  <div className="bg-green-50 p-3 rounded-xl shrink-0"><Phone className="text-green-600" size={24} /></div>
-                  <div>
-                    <h3 className="font-bold text-gray-700 text-lg">WhatsApp</h3>
-                    <p className="text-sm text-gray-500 mt-1">0831-7091-1994 (Admin 1)</p>
-                    <p className="text-sm text-gray-500">0812-8610-2477 (Admin 2)</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 md:col-span-2">
-                  <div className="bg-orange-50 p-3 rounded-xl shrink-0"><Mail className="text-orange-600" size={24} /></div>
-                  <div>
-                    <h3 className="font-bold text-gray-700 text-lg">Email</h3>
-                    <p className="text-sm text-gray-500 mt-1">halo@floristpapan.id</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+                ) : (
+                  <div className="flex justify-between items-center h-full">
+                    <div className="flex items-center gap-3">
+                      {activePage !== "katalog" ? (
+                        <button
+                          onClick={() => setActivePage("katalog")}
+                          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90"
+                        >
+                          <ArrowLeft size={24} className="text-gray-700" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setIsMenuOpen(true)}
+                          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90"
+                        >
+                          <Menu size={24} className="text-gray-700" />
+                        </button>
+                      )}
 
-        // --- 4. MAIN COMPONENT (App) ---
-
-        const App = () => {
-          // --- STATE ---
-          const [isMenuOpen, setIsMenuOpen] = useState(false);
-          const [scrolled, setScrolled] = useState(false);
-          const [activePage, setActivePage] = useState("katalog");
-          const [activeCategory, setActiveCategory] = useState("Semua");
-          const [isSearchOpen, setIsSearchOpen] = useState(false);
-          const [searchQuery, setSearchQuery] = useState("");
-          const [previewImage, setPreviewImage] = useState(null);
-          // State Favorit dengan data awal (contoh ID 1 dan 3)
-          const [favorites, setFavorites] = useState([1, 3]);
-
-          // --- HANDLERS ---
-          const handleNavigate = (page) => {
-            setActivePage(page);
-            setIsMenuOpen(false);
-            setIsSearchOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          };
-
-          const openSearch = () => {
-            setIsSearchOpen(true);
-            setActivePage("pencarian");
-          };
-
-          const closeSearch = () => {
-            setIsSearchOpen(false);
-            setSearchQuery("");
-            setActivePage("katalog");
-          };
-
-          const openPreview = (imgSrc) => {
-              setPreviewImage(imgSrc);
-          };
-
-          const closePreview = () => {
-              setPreviewImage(null);
-          };
-
-          // Handler untuk toggle favorite
-          const toggleFavorite = (id, e) => {
-              if (e) e.stopPropagation(); // Mencegah klik tembus ke preview gambar
-              setFavorites(prev => {
-                  if (prev.includes(id)) {
-                      return prev.filter(favId => favId !== id); // Hapus
-                  } else {
-                      return [...prev, id]; // Tambah
-                  }
-              });
-          };
-
-          useEffect(() => {
-            const handleScroll = () => setScrolled(window.scrollY > 20);
-            window.addEventListener("scroll", handleScroll);
-            return () => window.removeEventListener("scroll", handleScroll);
-          }, []);
-
-          // --- RENDER ---
-          return (
-            <div className="min-h-screen bg-gray-50 font-sans text-gray-800 pb-safe">
-              {/* HEADER */}
-              <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? "bg-white shadow-md py-2" : "bg-white/95 backdrop-blur-md py-3 shadow-sm"}`}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  {isSearchOpen ? (
-                    <div className="flex items-center h-full gap-3 animate-fade-in">
-                      <div className="relative flex-1">
-                        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input
-                          type="text"
-                          placeholder="Cari..."
-                          className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 border-none transition-all"
-                          autoFocus
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                      <div
+                        className="flex flex-col cursor-pointer select-none"
+                        onClick={() => setActivePage("katalog")}
+                      >
+                        <span className="text-lg md:text-xl font-bold text-emerald-700 tracking-tight leading-none">
+                          Gibran
+                          <span className="text-emerald-500">Florist</span>
+                        </span>
+                        <span className="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide">
+                          Kirim Bunga Cepat
+                        </span>
                       </div>
-                      <button onClick={closeSearch} className="p-2 text-gray-500 hover:text-rose-500 rounded-full hover:bg-gray-100 transition-colors">
-                        <span className="text-xs font-bold whitespace-nowrap">Batal</span>
+                    </div>
+                    <div className="flex items-center gap-1 md:gap-2">
+                      <button
+                        onClick={openSearch}
+                        className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors active:scale-90"
+                      >
+                        <Search size={22} />
+                      </button>
+                      {/* FITUR FAVORITE DI HEADER (TAMBAHAN BARU) */}
+                      <button
+                        onClick={() => handleNavigate("favorit")}
+                        className="p-2 hover:bg-gray-100 rounded-full text-rose-500 relative transition-colors active:scale-90"
+                      >
+                        <Heart size={22} />
+                        {favorites.length > 0 && (
+                          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-600 rounded-full animate-pulse ring-2 ring-white"></span>
+                        )}
                       </button>
                     </div>
-                  ) : (
-                    <div className="flex justify-between items-center h-full">
-                      <div className="flex items-center gap-3">
-                        {activePage !== "katalog" ? (
-                          <button onClick={() => setActivePage("katalog")} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90">
-                            <ArrowLeft size={24} className="text-gray-700" />
-                          </button>
-                        ) : (
-                          <button onClick={() => setIsMenuOpen(true)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90">
-                            <Menu size={24} className="text-gray-700" />
-                          </button>
-                        )}
-                        
-                        <div className="flex flex-col cursor-pointer select-none" onClick={() => setActivePage("katalog")}>
-                          <span className="text-lg md:text-xl font-bold text-emerald-700 tracking-tight leading-none">FloristPapan<span className="text-emerald-500">.id</span></span>
-                          <span className="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide">Kirim Bunga Cepat</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 md:gap-2">
-                        <button onClick={openSearch} className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors active:scale-90"><Search size={22} /></button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </header>
-
-              {/* SIDEBAR (Drawer) - Visible on ALL screens now */}
-              {isMenuOpen && (
-                <div className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
-              )}
-              <div className={`fixed top-0 left-0 h-full w-[280px] bg-white z-[60] shadow-2xl transform transition-transform duration-300 ease-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="p-5 flex justify-between items-center border-b border-gray-100 bg-emerald-50/50">
-                  <span className="font-bold text-lg text-emerald-800">Menu Utama</span>
-                  <button onClick={() => setIsMenuOpen(false)} className="p-1 hover:bg-white rounded-full transition-colors"><X size={24} className="text-gray-600" /></button>
-                </div>
-                <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100%-70px)]">
-                  <MenuItem icon={<ShoppingBag size={20} />} label="Katalog Bunga" active={activePage === "katalog"} onClick={() => handleNavigate("katalog")} />
-                  <MenuItem icon={<Heart size={20} />} label={`Produk Favorit (${favorites.length})`} active={activePage === "favorit"} onClick={() => handleNavigate("favorit")} />
-                  <MenuItem icon={<Tag size={20} />} label="Promo Spesial" badge="Hot" active={activePage === "promo"} onClick={() => handleNavigate("promo")} />
-                  <MenuItem icon={<Info size={20} />} label="Tentang Kami" active={activePage === "tentang"} onClick={() => handleNavigate("tentang")} />
-                  <MenuItem icon={<Phone size={20} />} label="Kontak & Lokasi" active={activePage === "kontak"} onClick={() => handleNavigate("kontak")} />
-                  
-                  <div className="mt-8 pt-6 border-t border-gray-100">
-                    <p className="text-xs text-gray-400 text-center">Version 1.2.0 &bull; &copy; 2025</p>
                   </div>
-                </nav>
+                )}
               </div>
+            </header>
 
-              {/* CONTENT */}
-              <main className="pt-24 pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[85vh]">
-                {activePage === "pencarian" && <PencarianView searchQuery={searchQuery} products={PRODUCTS_DATA} onImageClick={openPreview} favorites={favorites} onToggleFavorite={toggleFavorite} />}
-                {activePage === "katalog" && <KatalogView activeCategory={activeCategory} setActiveCategory={setActiveCategory} products={PRODUCTS_DATA} categories={CATEGORIES} onImageClick={openPreview} favorites={favorites} onToggleFavorite={toggleFavorite} />}
-                {activePage === "favorit" && <FavoritView products={PRODUCTS_DATA} onImageClick={openPreview} favorites={favorites} onToggleFavorite={toggleFavorite} />}
-                {activePage === "promo" && <PromoView products={PRODUCTS_DATA} onImageClick={openPreview} favorites={favorites} onToggleFavorite={toggleFavorite} />}
-                {activePage === "tentang" && <TentangView />}
-                {activePage === "kontak" && <KontakView />}
-              </main>
-
-              {/* FLOATING ACTION BUTTON */}
-              <a 
-                href={generateWALink()} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-green-500 hover:bg-green-600 text-white p-3.5 md:p-4 rounded-full shadow-xl shadow-green-500/30 z-50 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group"
-                aria-label="Chat WhatsApp"
-              >
-                <MessageCircle size={28} fill="white" className="text-green-500" />
-                <span className="absolute right-full mr-3 bg-white text-gray-700 text-xs font-bold px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden md:block">
-                  Chat Kami
+            {/* SIDEBAR (Drawer) - Visible on ALL screens now */}
+            {isMenuOpen && (
+              <div
+                className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm"
+                onClick={() => setIsMenuOpen(false)}
+              />
+            )}
+            <div
+              className={`fixed top-0 left-0 h-full w-[280px] bg-white z-[60] shadow-2xl transform transition-transform duration-300 ease-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+            >
+              <div className="p-5 flex justify-between items-center border-b border-gray-100 bg-emerald-50/50">
+                <span className="font-bold text-lg text-emerald-800">
+                  Menu Utama
                 </span>
-              </a>
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-1 hover:bg-white rounded-full transition-colors"
+                >
+                  <X size={24} className="text-gray-600" />
+                </button>
+              </div>
+              <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100%-70px)]">
+                <MenuItem
+                  icon={<ShoppingBag size={20} />}
+                  label="Katalog Bunga"
+                  active={activePage === "katalog"}
+                  onClick={() => handleNavigate("katalog")}
+                />
+                <MenuItem
+                  icon={<Heart size={20} />}
+                  label={`Produk Favorit (${favorites.length})`}
+                  active={activePage === "favorit"}
+                  onClick={() => handleNavigate("favorit")}
+                />
+                <MenuItem
+                  icon={<Tag size={20} />}
+                  label="Promo Spesial"
+                  badge="Hot" 
+                  active={activePage === "promo"}
+                  onClick={() => handleNavigate("promo")}
+                />
+                <MenuItem
+                  icon={<Info size={20} />}
+                  label="Tentang Kami"
+                  active={activePage === "tentang"}
+                  onClick={() => handleNavigate("tentang")}
+                />
+                <MenuItem
+                  icon={<Phone size={20} />}
+                  label="Kontak & Lokasi"
+                  active={activePage === "kontak"}
+                  onClick={() => handleNavigate("kontak")}
+                />
 
-              {/* IMAGE PREVIEW MODAL */}
-              <ImageModal src={previewImage} onClose={closePreview} />
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <p className="text-xs text-gray-400 text-center">
+                    Version 1.2.0 &bull; &copy; 2025
+                  </p>
+                </div>
+              </nav>
             </div>
-          );
-        };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+            {/* CONTENT */}
+            <main className="pt-24 pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[85vh]">
+              {activePage === "pencarian" && (
+                <PencarianView
+                  searchQuery={searchQuery}
+                  products={PRODUCTS_DATA}
+                  onImageClick={openPreview}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )}
+              {activePage === "katalog" && (
+                <KatalogView
+                  activeCategory={activeCategory}
+                  setActiveCategory={setActiveCategory}
+                  products={PRODUCTS_DATA}
+                  categories={CATEGORIES}
+                  onImageClick={openPreview}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )}
+              {activePage === "favorit" && (
+                <FavoritView
+                  products={PRODUCTS_DATA}
+                  onImageClick={openPreview}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )}
+              {activePage === "promo" && (
+                <PromoView
+                  products={PRODUCTS_DATA}
+                  onImageClick={openPreview}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )}
+              {activePage === "tentang" && <TentangView />}
+              {activePage === "kontak" && <KontakView />}
+            </main>
+
+            {/* FLOATING ACTION BUTTON */}
+            <a
+              href={generateWALink()}
+              target="_blank"
+              rel="noreferrer"
+              className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-green-500 hover:bg-green-600 text-white p-3.5 md:p-4 rounded-full shadow-xl shadow-green-500/30 z-50 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group"
+              aria-label="Chat WhatsApp"
+            >
+              <MessageCircle
+                size={28}
+                fill="white"
+                className="text-green-500"
+              />
+              <span className="absolute right-full mr-3 bg-white text-gray-700 text-xs font-bold px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden md:block">
+                Chat Kami
+              </span>
+            </a>
+
+            {/* IMAGE PREVIEW MODAL */}
+            <ImageModal src={previewImage} onClose={closePreview} />
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
     </script>
-</body>
+  </body>
 </html>
